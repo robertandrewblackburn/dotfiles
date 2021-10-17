@@ -16,8 +16,8 @@ HISTCONTROL=ignoreboth
 shopt -s histappend
 
 # for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
-HISTSIZE=1000
-HISTFILESIZE=2000
+HISTSIZE=10000
+HISTFILESIZE=10000
 
 # check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
@@ -57,7 +57,7 @@ if [ -n "$force_color_prompt" ]; then
 fi
 
 if [ "$color_prompt" = yes ]; then
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]$(git_branch) \$ '
 else
     PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
 fi
@@ -116,6 +116,34 @@ if ! shopt -oq posix; then
   fi
 fi
 
+# Hooks for common commands
+## cd
+
+# commands in this array will be executed after cd completes
+postcd_cmds=()
+# Append to the list of commands to run after cd'ing
+do_post_cd() {
+  postcd_cmds+=($@)
+}
+# Function called after cd'ing
+postcd() {
+  for cmd in "${postcd_cmds[@]}";do
+   eval "$cmd" 
+  done
+}
+
+# cd hooks
+cd_with_hooks() {
+  # precd "$@"
+  cd "$@";
+  postcd
+}
+
+alias cd='cd_with_hooks'
+# makes sure any custom CD stuff we set up applies to the first directory of the shell session
+cd $PWD
+
+# Rust
 . "$HOME/.cargo/env"
 
 export NVM_DIR="$HOME/.nvm"
@@ -124,7 +152,6 @@ export NVM_DIR="$HOME/.nvm"
 
 # automatically call `nvm use` when CD'ing
 cdnvm() {
-    cd "$@";
     nvm_path=$(nvm_find_up .nvmrc | tr -d '\n')
 
     # If there are no .nvmrc file, use the default nvm version
@@ -165,6 +192,26 @@ cdnvm() {
         fi
     fi
 }
-alias cd='cdnvm'
-cd $PWD
+do_post_cd cdnvm
+
+# Easy editing of .bashrc and .vimrc
+alias bashrc='vim ~/.bashrc'
+alias vimrc='vim ~/.vimrc'
+
+# Add the current git branch to the prompt (when in a git repository)
+function git_branch() {
+    if [ -d .git ] ; then
+        printf "%s" "($(git branch 2> /dev/null | awk '/\*/{print $2}'))";
+    fi
+}
+
+# I wonder if this is a bad idea
+alias python='python3'
+
+# Deno
+export DENO_INSTALL="/home/rab/.deno"
+export PATH="$DENO_INSTALL/bin:$PATH"
+
+# Use Podman instead of Docker
+alias docker='podman'
 
