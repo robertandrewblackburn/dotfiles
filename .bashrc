@@ -2,6 +2,34 @@
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
 
+###############################################################################
+#                           Table of Contents
+#------------------------------------------------------------------------------
+#  0. Default configuration
+#  |  These settings came with my installation of Pop!_OS (and I assume are the
+#  |  Ubuntu defaults)
+#  |
+#  1. Command hooks
+#  |  Custom 'hooks' to register commands to run before/after (pre/post)
+#  |  commands. For example, to automatically run `ls` after `cd`
+#  |
+#  2. Path
+#  |  Adding installed scripts/binaries to the $PATH variable
+#  |
+#  3. Aliases
+#  |  3.1 Upgraded tools
+#  |   |  These aliases replace 'standard' utils with preferred 'modern' 
+#  |   |  equivalents (usually trying to be backwards compatible).
+#  |   |  eg. `grep` --> `ripgrep`
+#  |  3.2 Utility
+#  |   |  Shortcuts and useful commands wrapped up for ease of use.
+#  |   |  eg. `bashrc` to open this file for editing in VIM
+#  | 
+#
+###############################################################################
+
+# 0. Default configuration ####################################################
+
 # If not running interactively, don't do anything
 case $- in
     *i*) ;;
@@ -56,6 +84,8 @@ if [ -n "$force_color_prompt" ]; then
     fi
 fi
 
+# 0.1 Prompt ##################################################################
+
 if [ "$color_prompt" = yes ]; then
     PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]$(git_branch) \$ '
 else
@@ -87,11 +117,6 @@ fi
 # colored GCC warnings and errors
 #export GCC_COLORS='error=01;31:warning=01;35:note=01;36:caret=01;32:locus=01:quote=01'
 
-# some more ls aliases
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls -CF'
-
 # Add an "alert" alias for long running commands.  Use like so:
 #   sleep 10; alert
 alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
@@ -116,7 +141,9 @@ if ! shopt -oq posix; then
   fi
 fi
 
-# Hooks for common commands
+###############################################################################
+# 1. Command hooks
+
 ## cd
 
 # commands in this array will be executed after cd completes
@@ -142,6 +169,9 @@ cd_with_hooks() {
 alias cd='cd_with_hooks'
 # makes sure any custom CD stuff we set up applies to the first directory of the shell session
 cd $PWD
+
+###############################################################################
+# 2. Path
 
 # Rust
 . "$HOME/.cargo/env"
@@ -194,8 +224,21 @@ cdnvm() {
 }
 do_post_cd cdnvm
 
+###############################################################################
+# 3. Aliases
+
+# modern rust equivalents
+alias ls='exa --group-directories-first'
+alias ll='ls -lF'
+alias la='ls -aF'
+alias l='ls -F'
+
+alias grep='rg'
+alias cat='batcat'
+
 # Easy editing of .bashrc and .vimrc
 alias bashrc='vim ~/.bashrc'
+alias reload='source ~/.bashrc'
 alias vimrc='vim ~/.vimrc'
 
 # Add the current git branch to the prompt (when in a git repository)
@@ -214,4 +257,11 @@ export PATH="$DENO_INSTALL/bin:$PATH"
 
 # Use Podman instead of Docker
 alias docker='podman'
+
+
+# Base16 Shell
+BASE16_SHELL="$HOME/.config/base16-shell/"
+[ -n "$PS1" ] && \
+    [ -s "$BASE16_SHELL/profile_helper.sh" ] && \
+        eval "$("$BASE16_SHELL/profile_helper.sh")"
 
