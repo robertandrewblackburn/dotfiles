@@ -176,6 +176,13 @@ cd $PWD
 # Rust
 . "$HOME/.cargo/env"
 
+# Deno
+export DENO_INSTALL="/home/rab/.deno"
+export PATH="$DENO_INSTALL/bin:$PATH"
+
+# add `~/bin`
+export PATH="~/bin:$PATH"
+
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
@@ -236,10 +243,15 @@ alias l='ls -F'
 alias grep='rg'
 alias cat='batcat'
 
+alias update='sudo apt update && sudo apt upgrade'
+
 # Easy editing of .bashrc and .vimrc
 alias bashrc='vim ~/.bashrc'
 alias reload='source ~/.bashrc'
 alias vimrc='vim ~/.vimrc'
+
+# quick password generator
+alias randompw="< /dev/random tr -dc 'a-zA-Z0-9-_\!@#\$%^&*()_+{}|:<>?=' | fold -w 12 | head -n 1"
 
 # Add the current git branch to the prompt (when in a git repository)
 function git_branch() {
@@ -251,13 +263,10 @@ function git_branch() {
 # I wonder if this is a bad idea
 alias python='python3'
 
-# Deno
-export DENO_INSTALL="/home/rab/.deno"
-export PATH="$DENO_INSTALL/bin:$PATH"
-
 # Use Podman instead of Docker
 alias docker='podman'
 
+alias dotfiles="cd ~/0_COMPUTE/Computer/dotfiles/ && git status"
 
 # Base16 Shell
 BASE16_SHELL="$HOME/.config/base16-shell/"
@@ -265,3 +274,10 @@ BASE16_SHELL="$HOME/.config/base16-shell/"
     [ -s "$BASE16_SHELL/profile_helper.sh" ] && \
         eval "$("$BASE16_SHELL/profile_helper.sh")"
 
+# if tmux is executable, X is running, and not inside a tmux session, start a new one
+if [ -x "$(command -v tmux)" ] && [ -n "${DISPLAY}" ]; then
+  [ -z "${TMUX}" ] && { tmux; } >/dev/null 2>&1
+fi
+
+# Make Caps Lock act like Esc (unless holding shift key)
+setxkbmap -option caps:escape_shifted_capslock
