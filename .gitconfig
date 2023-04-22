@@ -1,2 +1,5 @@
 [init]
-	defaultBranch = master
+	defaultBranch = main
+[user]
+	name = rablackburn
+	email = code@rablackburn.com
