@@ -3,3 +3,5 @@
 [user]
 	name = rablackburn
 	email = code@rablackburn.com
+[branch]
+	autoSetupRemote = always

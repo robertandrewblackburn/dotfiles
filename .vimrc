@@ -116,4 +116,3 @@ endif
 "let base16colorspace=256 " use correct colourspace for the base16 themes
 
 colorscheme base16-default-dark
-

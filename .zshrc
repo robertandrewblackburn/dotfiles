@@ -128,9 +128,9 @@ export DENO_INSTALL="/home/rab/.deno"
 export PATH="$DENO_INSTALL/bin:$PATH"
 
 # personal binaries
-export PATH="~/bin:$PATH"
+export PATH="/home/rab/bin:$PATH"
 # personal shell library
-export PATH="~/lib/shell:$PATH"
+export PATH="/home/rab/lib/shell:$PATH"
 
 # Start terminal in tmux session
 # if tmux is executable, X is running, and not inside a tmux session, start a new one
